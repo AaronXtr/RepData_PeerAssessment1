@@ -7,14 +7,16 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r readdata}
+
+```r
 library(readr)
 AM_data <- read.csv2(unz("activity.zip", "activity.csv"), header = TRUE, sep = ",")
 AM_data$date <- as.POSIXct(AM_data$date, format = "%Y-%m-%d")
 ```
 
 ## What is mean total number of steps taken per day?
-```{r hist_stepsperday, fig.height=4}
+
+```r
 par(mar = c(5, 4, 1, 1))
 dates <- unique(AM_data$date)
 AM_data_sortbydate <- as.data.frame(matrix(data = NA, length(dates),2))
@@ -31,7 +33,8 @@ steps_mean <- mean(AM_data_sortbydate$steps, na.rm = TRUE)
 The mean and median of total number of steps taken per day are `steps_mean` and `steps_median` respectively.
 
 ## What is the average daily activity pattern?
-```{r scatter_stepsbyinterval, fig.height = 4}
+
+```r
 intervals <- AM_data$interval[AM_data$date == AM_data$date[1]]
 AM_data_sortbyinterval <- as.data.frame(matrix(NA, length(intervals), 2))
 colnames(AM_data_sortbyinterval) <- c("steps", "interval")
@@ -44,10 +47,13 @@ plot(AM_data_sortbyinterval$interval, AM_data_sortbyinterval$steps, xlab = "inte
 max_timepoint <- AM_data_sortbyinterval$interval[AM_data_sortbyinterval$steps == max(AM_data_sortbyinterval$steps, na.rm = TRUE)]
 abline(v = max_timepoint, col = "red", lty = 2)
 ```
+
+![](PA1_template_files/figure-html/scatter_stepsbyinterval-1.png)<!-- -->
 The 835 interval, on average across all days in the dataset, contains the maximum number of steps.
 
 ## Imputing missing values
-```{r fillNAs, fig.height = 4}
+
+```r
 NA_num <- sum(!complete.cases(AM_data$steps))
 AM_data_NAsfilled <- AM_data
 for (i in 1:nrow(AM_data_NAsfilled)){
@@ -69,7 +75,8 @@ steps_mean_ <- mean(AM_data_NAsfilled_sortbydate$steps, na.rm = TRUE)
 There are `NA_num` total number of missing values in the dataset.
 The mean and median of total number of steps taken per day, after the missing value imputation, are `steps_mean_` and `steps_median_` respectively.
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r wk_day_end}
+
+```r
 wk <- function(date){
   ## return the logical vector, where loci of weekdays are TRUE, loci of weekends are FALSE
   rt <- logical(length(date))
@@ -101,3 +108,5 @@ plot(AM_data_NAsfilled_sortbyinterval_wday$interval, AM_data_NAsfilled_sortbyint
 points(AM_data_NAsfilled_sortbyinterval_wend$interval, AM_data_NAsfilled_sortbyinterval_wend$steps, col = "blue", type = "l")
 legend("topright", lty = 1, col = c("red", "blue"), legend = c("weekdays", "weekends"))
 ```
+
+![](PA1_template_files/figure-html/wk_day_end-1.png)<!-- -->
